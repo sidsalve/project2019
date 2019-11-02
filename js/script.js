@@ -4,6 +4,7 @@
 var db = openDatabase('userDataBase', '1.0', 'This is a user database', 2 * 1024 * 1024);
 var columnsTotal;
 var str;
+var editstr;
 var joinTableValDummy;
 if (!db) {
   alert("DataBase not created");
@@ -121,10 +122,10 @@ function update() {
   for (let i = 0; i < columnsTotal; i++) {
     tablecol.push("field" + i + "=?");
   }
-  str = tablecol.join(',');
-  str += " WHERE id=?";
+  editstr = tablecol.join(',');
+  editstr += " WHERE id=?";
   db.transaction(function (tran) {
-    tran.executeSql("UPDATE Temp SET " + str, getcolval);
+    tran.executeSql("UPDATE Temp SET " + editstr, getcolval);
   });
   output2();
 }
@@ -146,6 +147,7 @@ function updateForm(transaction, results) {
 
   document.getElementById("container").innerHTML = editForm;
 }
+
 function displayTable2(transaction, results) {
 
   document.getElementById("container").innerHTML = "";
