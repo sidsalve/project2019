@@ -1,0 +1,22 @@
+.btn{
+    width: 100px;
+    padding: 5px;
+    font-size: 15px;
+    background-color: cyan;
+}
+.btn:hover {
+    background-color: blue;
+}
+.in-text{
+    width: 20%;
+    padding: 5px;
+    margin-bottom: 20px;
+}
+
+.lab-text{
+    color: black;
+    padding: 9px;
+    font-family: 'Times New Roman', Times, serif;
+    display: inline;
+}
+
