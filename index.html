@@ -3,16 +3,18 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>
-            Task 2
+            Task 3
         </title>
         <link rel="stylesheet" href="css/style.css">
     </head>
     <body>
         <script src="js/script.js"></script>
         <div id="listingTable"></div>
-        <span id="result"></span><br><br>
+        <span id="result"></span><br>
         <a href="javascript:prevPage()" id="btn_prev">Prev</a>
         <a href="javascript:nextPage()" id="btn_next">Next</a>
-        page: <span id="page"></span>
+        page: <span id="page"></span> / <span id="totalPage"></span>
+        <input id="pageno" type="number">
+        <button id="go" hidden onclick="getPage()">Button</button>
     </body>
 </html>
