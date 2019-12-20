@@ -165,6 +165,7 @@ function handleClick(myRadio) {
 function getPage() {
   var input = document.getElementById("pageno");
   if (input.value <= numPages()) {
+    current_page = input.value;
     changePage(input.value);
   } else {
     alert("Page NOT Found..!");
