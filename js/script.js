@@ -14,255 +14,166 @@ else {
   console.log("database created", db.version);
 }
 
-// db.transaction(function (tran) {
-//   tran.executeSql('CREATE TABLE IF NOT EXISTS Users (id INTEGER PRIMARY KEY,Name, MailID, Gender, Dob)');
-  // tran.executeSql('insert into Users (id, Name, MailID, Gender, Dob) values (1, "Siddharth","siddharthsalve@gmail.com","Male","19/06/1997")');
-// });
-// db.transaction(function (tx) {
-//     tx.executeSql('DROP TABLE Users');
-//   });
-// output();
-// function displayTable(transaction, results) {
+var current_page = 1;
+var records_per_page = 2;
+var selected = [];
+var objJson = [
+    { images: "assets/images/img1.jpeg"},
+    { images: "assets/images/img2.jpeg"},
+    { images: "assets/images/img3.jpeg"},
+    { images: "assets/images/img4.jpeg"},
+    { images: "assets/images/img5.jpeg"},
+    { images: "assets/images/img6.jpeg"},
+    { images: "assets/images/img7.jpeg"},
+    { images: "assets/images/img8.jpg"},
+    { images: "assets/images/img9.jpg"},
+    { images: "assets/images/img10.jpg"},
+    { images: "assets/images/img11.jpg"},
+    { images: "assets/images/img12.jpeg"},
+    { images: "assets/images/img13.jpg"},
+    { images: "assets/images/img14.jpg"},
+    { images: "assets/images/img15.jpg"},
+    { images: "assets/images/img16.jpg"},
+    { images: "assets/images/img17.jpg"},
+    { images: "assets/images/img18.jpg"},
+    { images: "assets/images/img19.jpg"},
+    { images: "assets/images/img20.jpg"}
+]; // Can be obtained from another source, such as your objJson variable
 
-//   document.getElementById("result").innerHTML = "";
-
-//   var listholder = `<table border=1>
-//                                 <tr>
-//                                     <th>Name</th>
-//                                     <th>Email</th>
-//                                     <th>Gender</th>
-//                                     <th>Dob</th>
-//                                     <th>Edit</th>
-//                                 </tr>`;
-
-//   var i;
-//   for (i = 0; i < results.rows.length; i++) {
-//     var row = results.rows.item(i);
-//     listholder += "<tr><td>" + row.Name + "</td><td>" + row.MailID + "</td><td>" + row.Gender + "</td><td>" + row.Dob + "</td><td>" + "(<a href='javascript:void(0);' onclick='deleterow(" + row.id + ");'>Delete row</a>)" + "</td></tr>";
-//   }
-//   listholder += "</table>";
-//   document.getElementById("result").innerHTML = listholder;
-// }
-
-// function output() {
-//   if (db) {
-//     db.transaction(function (tran) {
-//       tran.executeSql("SELECT * FROM Users", [], displayTable);
-//     });
-//   } else {
-//     alert("db not found, your browser does not support web sql!");
-//   }
-// }
-
-function deleterow(id) {
-  if (db) {
-    db.transaction(function (tran) {
-      tran.executeSql("DELETE FROM Users WHERE id=?", [id], output);
-    });
-  } else {
-    alert("db not found, your browser does not support web sql!");
-  }
-}
-
-function onSubmit() {
-  var gen = "";
-  var name = document.getElementById('name').value;
-  var email = document.getElementById('email').value;
-  var gender = document.getElementsByName("gender");
-  var dob = document.getElementById('dob').value;
-  for (i = 0; i < gender.length; i++) {
-    if (gender[i].checked) {
-      gen = gender[i]
+function prevPage()
+{
+    if (current_page > 1) {
+        current_page--;
+        changePage(current_page);
+        document.getElementById("result").innerHTML = "";
     }
-  }
-  if (name == "" || email == "" || gen.value == "" || dob == "") {
-    alert("please fill form");
-    return false;
-  } else {
-    db.transaction(function (tran) {
-      tran.executeSql('insert into Users (Name, MailID, Gender, Dob) values (?, ?, ?, ?)', [name, email, gen.value, dob]);
-      output();
-    });
-    document.getElementById("userform").reset();
-    document.getElementById("mylocation").innerHTML = "Data Submitted";
-    return true;
-  }
 }
 
-function deleteRow2(id) {
-  if (db) {
-    db.transaction(function (tran) {
-      tran.executeSql("DELETE FROM Temp WHERE id=?", [id], output2);
-    });
-  } else {
-    alert("db not found, your browser does not support web sql!");
-  }
+function nextPage()
+{
+    if (current_page < numPages()) {
+      document.getElementById("result").innerHTML = "";
+        current_page++;
+        changePage(current_page);
+
+    }
 }
 
-function editRow(id) {
-  if (db) {
-    db.transaction(function (tran) {
-      tran.executeSql("select * FROM Temp WHERE id=?", [id], updateForm);
-    });
-  } else {
-    alert("db not found, your browser does not support web sql!");
-  }
-}
-function update() {
-  var formElements = document.getElementById('edit').elements;
-  var postData = {};
-  for (var i = 0; i < formElements.length; i++)
-    if (formElements[i].type != "submit")
-      postData[formElements[i].name] = formElements[i].value;
+function changePage(page)
+{
+    var btn_next = document.getElementById("btn_next");
+    var btn_prev = document.getElementById("btn_prev");
+    var listing_table = document.getElementById("listingTable");
+    var page_span = document.getElementById("page");
+    console.log("slected",selected);
+    
+    // Validate page
+    if (page < 1) page = 1;
+    if (page > numPages()) page = numPages();
 
-  var getcolval = Object.values(postData);
-  getcolval.push(+getcolval.shift());
-  // console.log(getcolval);
-  var tablecol = [];
-  for (let i = 0; i < columnsTotal; i++) {
-    tablecol.push("field" + i + "=?");
-  }
-  editstr = tablecol.join(',');
-  editstr += " WHERE id=?";
-  db.transaction(function (tran) {
-    tran.executeSql("UPDATE Temp SET " + editstr, getcolval);
-  });
-  output2();
-}
-function updateForm(transaction, results) {
-  document.getElementById("container").innerHTML = "";
-  var row = results.rows.item(0);
-  // console.log("row", row);
+    listing_table.innerHTML = "";
 
-  var editForm = `<form id="edit">`;
+    for (var i = (page-1) * records_per_page; i < (page * records_per_page); i++) {
+        // listing_table.innerHTML += objJson[i].adName + "<br>";
+        listing_table.innerHTML += "<img src="+ objJson[i].images+" width=\"400px\" height=\"200px\">" + "<br><br>";
 
-  for (var key of Object.keys(row)) {
-    if (key == "id") {
-      editForm += `<input type="text" name="` + key + `" id="row` + key + `" value="` + row[key] + `" class="in-text" readonly><br><br>`;
+    }
+    listing_table.innerHTML +=`
+    <br><br>
+    <form id="mainForm" name="mainForm">
+      <table align="center">
+        <tr>
+            <td class="style10">
+            <input id="Radio1"  type="radio" name="rating" onclick="handleClick(this);" value="1"><span>1</span>
+            <input id="Radio2" type="radio" name="rating" onclick="handleClick(this);" value="2"><span>2</span>
+            <input id="Radio3" type="radio" name="rating" onclick="handleClick(this);" value="3"><span>3</span>
+            <input id="Radio4" type="radio" name="rating" onclick="handleClick(this);" value="4"><span>4</span>
+            <input id="Radio5" type="radio" name="rating" onclick="handleClick(this);" value="5"><span>5</span>
+            <input id="Radio6" type="radio" name="rating" onclick="handleClick(this);" value="6"><span>6</span>
+            <input id="Radio7" type="radio" name="rating" onclick="handleClick(this);" value="7"><span>7</span>
+            <input id="Radio8" type="radio" name="rating" onclick="handleClick(this);" value="8"><span>8</span>
+            <input id="Radio9" type="radio" name="rating" onclick="handleClick(this);" value="9"><span>9</span>
+            <input id="Radio10" type="radio" name="rating" onclick="handleClick(this);" value="10"><span>10</span>
+        </tr>
+      </table>
+    </form>
+    `
+    page_span.innerHTML = page;
+    var key = "page"+page;
+    if(selected.length > 0){
+      // console.log("kkk",selected[0]["page"+1]);
+      for (let i = 0; i < selected.length; i++) {
+        for(const keys in selected[i]){
+          if(keys === key){
+            document.getElementById("Radio"+selected[i][key]).checked = true;
+            console.log("kkk",selected[i][key]); 
+          }  
+        }
+      }
+    }
+    
+    if (page == 1) {
+        btn_prev.style.visibility = "hidden";
     } else {
-      editForm += `<input type="text" name="` + key + `" id="row` + key + `" value="` + row[key] + `" class="in-text"required><br><br>`;
+        btn_prev.style.visibility = "visible";
+    }
+
+    if (page == numPages()) {
+        btn_next.style.visibility = "hidden";
+    } else {
+        btn_next.style.visibility = "visible";
+    }
+}
+
+// document.mainForm.onclick = function(){
+//   var radVal = document.mainForm.rating.value;
+//   result.innerHTML = 'You selected: '+radVal;
+// }
+
+// (function (){
+//   var radios = document.getElementsByName('rating');
+//   console.log(radios);
+//   for(var i = 0; i < radios.length; i++){
+//       radios[i].onclick = function(){
+//           document.getElementById('result').innerText = this.value;
+//       }
+//   }
+// })();
+
+function handleClick(myRadio) {
+  var match = true;
+  document.getElementById('result').innerText = 'You selected: '+ myRadio.value;
+  var pa = document.getElementById("page");
+  var pageVal = pa.textContent;
+  var obj = {};
+  var key = "page"+pageVal
+  obj[key] = myRadio.value;
+  if(selected.length > 0){
+    // console.log("kkk",selected[0]["page"+1]);
+    for (let i = 0; i < selected.length; i++) {
+      for(const keys in selected[i]){
+        if(keys === key){
+          console.log("uuu");
+          match = false;
+          selected[i][key] = myRadio.value ;
+          console.log("kkk",selected[i][key]); 
+        }  
+      }
+    }
+    if(match){
+      selected.push(obj);
     }
   }
-  editForm += `<input type="submit" value="Submit" class="btn" onclick="update();return false;">&nbsp;<input type="submit" value="Cancel" class="btn" onclick="output2();return false;"></form>`;
-
-  document.getElementById("container").innerHTML = editForm;
-}
-
-function displayTable2(transaction, results) {
-
-  document.getElementById("container").innerHTML = "";
-
-  var tHeader = "<table border=1><tr><th>Id</th>";
-
-  for (let i = 0; i < columnsTotal; i++) {
-    tHeader += "<th>Column" + i + "</th>";
-  }
-  tHeader += "<th>edit</th><th>delete</th></tr>";
-  var i;
-  for (i = 0; i < results.rows.length; i++) {
-    var row = results.rows.item(i);
-
-    tHeader += "<tr>";
-    for (var key of Object.keys(row)) {
-      tHeader += "<td>" + row[key] + "</td>";
-    }
-    tHeader += "<td>" + "(<a href='javascript:void(0);' onclick='editRow(" + row.id + ");'>edit</a>)" + "</td><td>" + "(<a href='javascript:void(0);' onclick='deleteRow2(" + row.id + ");'>delete</a>)" + "</td></tr>";
-  }
-  tHeader += "</table><a href='javascript:void(0);' onclick='addNew();'>+Add New</a>";
-  document.getElementById("container").innerHTML = tHeader;
-}
-
-function output2() {
-  if (db) {
-    db.transaction(function (tran) {
-      tran.executeSql("SELECT * FROM Temp", [], displayTable2);
-    });
-  } else {
-    alert("db not found, your browser does not support web sql!");
+  else{
+    selected.push(obj);
   }
 }
 
-function createTable() {
-  var row = document.getElementById('row').value;
-  var col = document.getElementById('col').value;
-  if (row == "" || col == "") {
-    alert("please fill form");
-    return false;
-  }
-
-  if (row < 1 || col < 1) {
-    alert("negative or 0 value not allowed..!!");
-    return;
-  }
-  columnsTotal = col;
-  var tablecol = [];
-  var tablevaldummy = []
-  for (let i = 0; i < col; i++) {
-    tablecol.push("field" + i);
-    tablevaldummy.push("?");
-  }
-  str = tablecol.join(',');
-  joinTableValDummy = tablevaldummy.join(",");
-  let str1 = 'CREATE TABLE IF NOT EXISTS Temp (id INTEGER PRIMARY KEY,' + str + ')';
-  db.transaction(function (tran) {
-    tran.executeSql('DROP TABLE Temp');
-  });
-  db.transaction(function (tran) {
-    tran.executeSql(str1);
-  });
-
-  document.getElementById("container").innerHTML = "";
-
-  var htmlstr = `<h1>Enter ` + row + ` Record<h1><br><br><form id="dataform">`;
-  for (let i = 0; i < row; i++) {
-    htmlstr += `<h3>Enter record ` + i + `<br>`;
-    for (let j = 0; j < col; j++) {
-
-      htmlstr += `<input type="text" name="` + i + `row` + j + `" id="` + i + `row` + j + `" class="in-text" placeholder="data` + j + `" required><br><br>`;
-
-    }
-    htmlstr += "<hr>";
-  }
-  htmlstr += `<input type="submit" value="Submit" class="btn" onclick="submitData();return false;"></form>`;
-  document.getElementById("container").innerHTML = htmlstr;
+function numPages()
+{
+    return Math.ceil(objJson.length / records_per_page);
 }
 
-function submitData() {
-  var formElements = document.getElementById('dataform').elements;
-  var postData = {};
-  for (var i = 0; i < formElements.length; i++)
-    if (formElements[i].type != "submit")
-      postData[formElements[i].name] = formElements[i].value;
-
-  var getcolval = Object.values(postData);
-  // console.log(getcolval);
-  var chunk;
-  while (getcolval.length > 0) {
-
-    chunk = getcolval.splice(0, columnsTotal)
-    insertValue(chunk);
-  }
-
-  output2();
-}
-
-function insertValue(data) {
-  db.transaction(function (tran) {
-    tran.executeSql('insert into Temp (' + str + ') values (' + joinTableValDummy + ')', data);
-  });
-}
-
-function addNew() {
-  document.getElementById("container").innerHTML = "";
-
-  var htmlstr = `<h1><form id="dataform">`;
-    htmlstr += `<h3>Enter new record<br>`;
-    var i=0;
-    for (let j = 0; j < columnsTotal; j++) {
-
-      htmlstr += `<input type="text" name="` + i + `row` + j + `" id="` + i + `row` + j + `" class="in-text" placeholder="data` + j + `" required><br><br>`;
-
-    }
-  htmlstr += `<input type="submit" value="Add" class="btn" onclick="submitData();return false;">&nbsp;<input type="submit" value="Cancel" class="btn" onclick="output2();return false;"></form>`;
-  document.getElementById("container").innerHTML = htmlstr;
-}
+window.onload = function() {
+    changePage(1);
+};
