@@ -1,18 +1,18 @@
 // let d = new Date();
 // document.body.innerHTML = "<h1>Today's date is " + d + "</h1>"
 
-var db = openDatabase('userDataBase', '1.0', 'This is a user database', 2 * 1024 * 1024);
+// var db = openDatabase('userDataBase', '1.0', 'This is a user database', 2 * 1024 * 1024);
 var columnsTotal;
 var str;
 var editstr;
 var joinTableValDummy;
-if (!db) {
-  alert("DataBase not created");
-}
-else {
-  var version = db.version;
-  console.log("database created", db.version);
-}
+// if (!db) {
+//   alert("DataBase not created");
+// }
+// else {
+//   var version = db.version;
+//   console.log("database created", db.version);
+// }
 
 var current_page = 1;
 var records_per_page = 2;
