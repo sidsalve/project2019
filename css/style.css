@@ -19,6 +19,9 @@
     font-family: 'Times New Roman', Times, serif;
     display: inline;
 }
+.img_cursor{
+    cursor: pointer;
+}
 
 body {
     margin:50px 0; 

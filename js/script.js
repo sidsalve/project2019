@@ -1,45 +1,75 @@
 // let d = new Date();
 // document.body.innerHTML = "<h1>Today's date is " + d + "</h1>"
-
-// var db = openDatabase('userDataBase', '1.0', 'This is a user database', 2 * 1024 * 1024);
+var db = openDatabase('postDb', '1.0', 'This is a user database', 100 * 1024 * 1024);
 var columnsTotal;
 var str;
 var editstr;
 var joinTableValDummy;
-// if (!db) {
-//   alert("DataBase not created");
-// }
-// else {
-//   var version = db.version;
-//   console.log("database created", db.version);
-// }
+if (!db) {
+  alert("DataBase not created");
+}
+else {
+  var version = db.version;
+  console.log("database created", db.version);
+}
+
+db.transaction(function (tran) {
+  tran.executeSql('CREATE TABLE IF NOT EXISTS images (imageId INTEGER PRIMARY KEY,imageFileName)');
+  tran.executeSql('insert into images (imageId, imageFileName) values (1, "assets/images/img1.jpeg")');
+  tran.executeSql('insert into images (imageId, imageFileName) values (2, "assets/images/img2.jpeg")');
+  tran.executeSql('insert into images (imageId, imageFileName) values (3, "assets/images/img3.jpeg")');
+  tran.executeSql('insert into images (imageId, imageFileName) values (4, "assets/images/img4.jpeg")');
+  tran.executeSql('insert into images (imageId, imageFileName) values (5, "assets/images/img5.jpeg")');
+  tran.executeSql('insert into images (imageId, imageFileName) values (6, "assets/images/img6.jpeg")');
+  tran.executeSql('insert into images (imageId, imageFileName) values (7, "assets/images/img7.jpeg")');
+  tran.executeSql('insert into images (imageId, imageFileName) values (8, "assets/images/img8.jpg")');
+  tran.executeSql('insert into images (imageId, imageFileName) values (9, "assets/images/img9.jpg")');
+  tran.executeSql('insert into images (imageId, imageFileName) values (10, "assets/images/img10.jpg")');
+  tran.executeSql('insert into images (imageId, imageFileName) values (11, "assets/images/img11.jpg")');
+  tran.executeSql('insert into images (imageId, imageFileName) values (12, "assets/images/img12.jpeg")');
+  tran.executeSql('insert into images (imageId, imageFileName) values (13, "assets/images/img13.jpg")');
+  tran.executeSql('insert into images (imageId, imageFileName) values (14, "assets/images/img14.jpg")');
+  tran.executeSql('insert into images (imageId, imageFileName) values (15, "assets/images/img15.jpg")');
+  tran.executeSql('insert into images (imageId, imageFileName) values (16, "assets/images/img16.jpg")');
+  tran.executeSql('insert into images (imageId, imageFileName) values (17, "assets/images/img17.jpg")');
+  tran.executeSql('insert into images (imageId, imageFileName) values (18, "assets/images/img18.jpg")');
+  tran.executeSql('insert into images (imageId, imageFileName) values (19, "assets/images/img19.jpg")');
+  tran.executeSql('insert into images (imageId, imageFileName) values (20, "assets/images/img20.jpg")');
+
+});
+
+db.transaction(function (tran) {
+  tran.executeSql('CREATE TABLE IF NOT EXISTS posts (postId INTEGER PRIMARY KEY,postDescriptionShort, postDescriptionLong, postImageId, FOREIGN KEY (postImageId) REFERENCES images(imageId))');
+  tran.executeSql('insert into posts (postId, postDescriptionShort, postDescriptionLong, postImageId) values (1, "image of nature 1","Nature in the broadest sense is the natural 1",1)');
+  tran.executeSql('insert into posts (postId, postDescriptionShort, postDescriptionLong, postImageId) values (2, "image of nature 2","Nature in the broadest sense is the natural 2",2)');
+  tran.executeSql('insert into posts (postId, postDescriptionShort, postDescriptionLong, postImageId) values (3, "image of nature 3","Nature in the broadest sense is the natural 3",3)');
+  tran.executeSql('insert into posts (postId, postDescriptionShort, postDescriptionLong, postImageId) values (4, "image of nature 4","Nature in the broadest sense is the natural 4",4)');
+  tran.executeSql('insert into posts (postId, postDescriptionShort, postDescriptionLong, postImageId) values (5, "image of nature 5","Nature in the broadest sense is the natural 5",5)');
+  tran.executeSql('insert into posts (postId, postDescriptionShort, postDescriptionLong, postImageId) values (6, "image of nature 6","Nature in the broadest sense is the natural 6",6)');
+  tran.executeSql('insert into posts (postId, postDescriptionShort, postDescriptionLong, postImageId) values (7, "image of nature 7","Nature in the broadest sense is the natural 7",7)');
+  tran.executeSql('insert into posts (postId, postDescriptionShort, postDescriptionLong, postImageId) values (8, "image of nature 8","Nature in the broadest sense is the natural 8",8)');
+  tran.executeSql('insert into posts (postId, postDescriptionShort, postDescriptionLong, postImageId) values (9, "image of nature 9","Nature in the broadest sense is the natural 9",9)');
+  tran.executeSql('insert into posts (postId, postDescriptionShort, postDescriptionLong, postImageId) values (10, "image of nature 10","Nature in the broadest sense is the natural 10",10)');
+  tran.executeSql('insert into posts (postId, postDescriptionShort, postDescriptionLong, postImageId) values (11, "image of nature 11","Nature in the broadest sense is the natural 11",11)');
+  tran.executeSql('insert into posts (postId, postDescriptionShort, postDescriptionLong, postImageId) values (12, "image of nature 12","Nature in the broadest sense is the natural 12",12)');
+  tran.executeSql('insert into posts (postId, postDescriptionShort, postDescriptionLong, postImageId) values (13, "image of nature 13","Nature in the broadest sense is the natural 13",13)');
+  tran.executeSql('insert into posts (postId, postDescriptionShort, postDescriptionLong, postImageId) values (14, "image of nature 14","Nature in the broadest sense is the natural 14",14)');
+  tran.executeSql('insert into posts (postId, postDescriptionShort, postDescriptionLong, postImageId) values (15, "image of nature 15","Nature in the broadest sense is the natural 15",15)');
+  tran.executeSql('insert into posts (postId, postDescriptionShort, postDescriptionLong, postImageId) values (16, "image of nature 16","Nature in the broadest sense is the natural 16",16)');
+  tran.executeSql('insert into posts (postId, postDescriptionShort, postDescriptionLong, postImageId) values (17, "image of nature 17","Nature in the broadest sense is the natural 17",17)');
+  tran.executeSql('insert into posts (postId, postDescriptionShort, postDescriptionLong, postImageId) values (18, "image of nature 18","Nature in the broadest sense is the natural 18",18)');
+  tran.executeSql('insert into posts (postId, postDescriptionShort, postDescriptionLong, postImageId) values (19, "image of nature 19","Nature in the broadest sense is the natural 19",19)');
+  tran.executeSql('insert into posts (postId, postDescriptionShort, postDescriptionLong, postImageId) values (20, "image of nature 20","Nature in the broadest sense is the natural 20",20)');
+
+});
+
 
 var current_page = 1;
-var records_per_page = 2;
+var records_per_page = 6;
 var selected = [];
-var objJson = [
-  { images: "assets/images/img1.jpeg" },
-  { images: "assets/images/img2.jpeg" },
-  { images: "assets/images/img3.jpeg" },
-  { images: "assets/images/img4.jpeg" },
-  { images: "assets/images/img5.jpeg" },
-  { images: "assets/images/img6.jpeg" },
-  { images: "assets/images/img7.jpeg" },
-  { images: "assets/images/img8.jpg" },
-  { images: "assets/images/img9.jpg" },
-  { images: "assets/images/img10.jpg" },
-  { images: "assets/images/img11.jpg" },
-  { images: "assets/images/img12.jpeg" },
-  { images: "assets/images/img13.jpg" },
-  { images: "assets/images/img14.jpg" },
-  { images: "assets/images/img15.jpg" },
-  { images: "assets/images/img16.jpg" },
-  { images: "assets/images/img17.jpg" },
-  { images: "assets/images/img18.jpg" },
-  { images: "assets/images/img19.jpg" },
-  { images: "assets/images/img20.jpg" }
-]; // Can be obtained from another source, such as your objJson variable
-
+var total_rec;
+firstValue = 1;
+lastValue = records_per_page;
 function prevPage() {
   if (current_page > 1) {
     current_page--;
@@ -62,38 +92,20 @@ function changePage(page) {
   var btn_prev = document.getElementById("btn_prev");
   var listing_table = document.getElementById("listingTable");
   var page_span = document.getElementById("page");
-  document.getElementById("totalPage").innerHTML = numPages();
+  var total_page = document.getElementById("totalPage");
+  total_page.innerHTML = numPages();
   // Validate page
   if (page < 1) page = 1;
   if (page > numPages()) page = numPages();
 
   listing_table.innerHTML = "";
+  lastValue = page * records_per_page;
+  firstValue = lastValue - records_per_page;
 
-  for (var i = (page - 1) * records_per_page; i < (page * records_per_page); i++) {
-    // listing_table.innerHTML += objJson[i].adName + "<br>";
-    listing_table.innerHTML += "<img src=" + objJson[i].images + " width=\"400px\" height=\"200px\">" + "<br><br>";
+  db.transaction(function (tran) {
+    tran.executeSql("select * FROM images WHERE imageId > ? ORDER BY imageId LIMIT ?", [firstValue, records_per_page], getResult);
+  });
 
-  }
-  listing_table.innerHTML += `
-    <br><br>
-    <form id="mainForm" name="mainForm">
-      <table align="center">
-        <tr>
-            <td class="style10">
-            <input id="Radio1"  type="radio" name="rating" onclick="handleClick(this);" value="1"><span>1</span>
-            <input id="Radio2" type="radio" name="rating" onclick="handleClick(this);" value="2"><span>2</span>
-            <input id="Radio3" type="radio" name="rating" onclick="handleClick(this);" value="3"><span>3</span>
-            <input id="Radio4" type="radio" name="rating" onclick="handleClick(this);" value="4"><span>4</span>
-            <input id="Radio5" type="radio" name="rating" onclick="handleClick(this);" value="5"><span>5</span>
-            <input id="Radio6" type="radio" name="rating" onclick="handleClick(this);" value="6"><span>6</span>
-            <input id="Radio7" type="radio" name="rating" onclick="handleClick(this);" value="7"><span>7</span>
-            <input id="Radio8" type="radio" name="rating" onclick="handleClick(this);" value="8"><span>8</span>
-            <input id="Radio9" type="radio" name="rating" onclick="handleClick(this);" value="9"><span>9</span>
-            <input id="Radio10" type="radio" name="rating" onclick="handleClick(this);" value="10"><span>10</span>
-        </tr>
-      </table>
-    </form>
-    `
   page_span.innerHTML = page;
   var key = "page" + page;
   if (selected.length > 0) {
@@ -119,48 +131,35 @@ function changePage(page) {
   }
 }
 
-// document.mainForm.onclick = function(){
-//   var radVal = document.mainForm.rating.value;
-//   result.innerHTML = 'You selected: '+radVal;
-// }
+function getResult(transaction, results) {
+  document.getElementById("newlistingTable").innerHTML = "";
 
-// (function (){
-//   var radios = document.getElementsByName('rating');
-//   console.log(radios);
-//   for(var i = 0; i < radios.length; i++){
-//       radios[i].onclick = function(){
-//           document.getElementById('result').innerText = this.value;
-//       }
-//   }
-// })();
+  var listing_table1 = document.getElementById("newlistingTable");
 
-function handleClick(myRadio) {
-  var match = true;
-  document.getElementById('result').innerText = 'You selected: ' + myRadio.value;
-  var pa = document.getElementById("page");
-  var pageVal = pa.textContent;
-  var obj = {};
-  var key = "page" + pageVal
-  obj[key] = myRadio.value;
-  if (selected.length > 0) {
-    // console.log("kkk",selected[0]["page"+1]);
-    for (let i = 0; i < selected.length; i++) {
-      for (const keys in selected[i]) {
-        if (keys === key) {
-          match = false;
-          selected[i][key] = myRadio.value;
-        }
-      }
-    }
-    if (match) {
-      selected.push(obj);
-    }
-  }
-  else {
-    selected.push(obj);
+  for (var i = 0; i < results.rows.length; i++) {
+
+    listing_table1.innerHTML += "<img src=" + results.rows.item(i).imageFileName + " width=\"400px\" height=\"200px\" onclick=goImageDesc(" + results.rows.item(i).imageId + ") class=\"img_cursor\">" + "<br><br>";
+
   }
 }
+function goImageDesc(id) {
+  db.transaction(function (tran) {
+    tran.executeSql("select * FROM posts WHERE postImageId = ?", [id], showDesc);
+  });
+}
+function showDesc(transaction, result) {
+  document.getElementById("container").style.display = "none";
+  document.getElementById("container1").style.display = "block";
+  document.getElementById("container1").innerHTML = ""
+  var desc = document.getElementById("container1");
+  desc.innerHTML += "<h1>" + result.rows.item(0).postDescriptionLong + "</h1>";
+  desc.innerHTML += `<br><br><button id="go" onclick="back()">Back</button>`;
+}
 
+function back() {
+  document.getElementById("container1").style.display = "none";
+  document.getElementById("container").style.display = "block";
+}
 
 function getPage() {
   var input = document.getElementById("pageno");
@@ -172,8 +171,24 @@ function getPage() {
   }
 
 }
+
 function numPages() {
-  return Math.ceil(objJson.length / records_per_page);
+  totalRecord(function (count) {
+    total_rec = count;
+  });
+  return Math.ceil(total_rec / records_per_page);
+}
+
+
+function totalRecord(callback) {
+  var count = 0;
+  db.transaction(function (tx) {
+    tx.executeSql('SELECT * FROM images', [], function (tx, results) {
+      // this function is called when the executeSql is ended
+      count = results.rows.length;
+      callback(count);   // <-- call the callback when is done   
+    });
+  });
 }
 
 window.onload = function () {

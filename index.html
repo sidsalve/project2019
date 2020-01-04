@@ -8,13 +8,21 @@
         <link rel="stylesheet" href="css/style.css">
     </head>
     <body>
-        <script src="js/script.js"></script>
-        <div id="listingTable"></div>
-        <span id="result"></span><br>
-        <a href="javascript:prevPage()" id="btn_prev">Prev</a>
-        <a href="javascript:nextPage()" id="btn_next">Next</a>
-        page: <span id="page"></span> / <span id="totalPage"></span>
-        <input id="pageno" type="number">
-        <button id="go" hidden onclick="getPage()">Button</button>
+        <div class="container" id="container">
+            <script src="js/script.js"></script>
+            <div id="listingTable"></div>
+            <hr>
+            <div id="newlistingTable"></div>
+            <span id="result"></span><br>
+            <a href="javascript:prevPage()" id="btn_prev">Prev</a>
+            <a href="javascript:nextPage()" id="btn_next">Next</a>
+            page: <span id="page"></span> / <span id="totalPage"></span>
+            <input id="pageno" type="number">
+            <button id="go" hidden onclick="getPage()">Button</button>
+        </div>
+
+        <div class="container1" id="container1">
+            <div id="descresult"></div>
+        </div>
     </body>
 </html>
