@@ -65,7 +65,7 @@ db.transaction(function (tran) {
 
 
 var current_page = 1;
-var records_per_page = 6;
+var records_per_page = 3; // you can change this number 
 var selected = [];
 var total_rec;
 firstValue = 1;
@@ -93,7 +93,9 @@ function changePage(page) {
   var listing_table = document.getElementById("listingTable");
   var page_span = document.getElementById("page");
   var total_page = document.getElementById("totalPage");
-  total_page.innerHTML = numPages();
+   setTimeout(() =>{
+    total_page.innerHTML = numPages();
+   },1000)
   // Validate page
   if (page < 1) page = 1;
   if (page > numPages()) page = numPages();

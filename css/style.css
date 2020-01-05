@@ -23,8 +23,27 @@
     cursor: pointer;
 }
 
-body {
-    margin:50px 0; 
-    padding:0;
+/* .container-flex {
+    display: inline-flex;
+    flex-direction: column; /* Items go top to bottom in a column */
+/* } */
+
+/* .container {
+    background-color:gray;
+    font-size: 15px;
+    font-family: arial;
+    font-weight: bold;
+    width: 900px;
+    height:auto;
+    margin: 15px 0px 25px 0px;
     text-align:center;
+    border: solid 1px brown;
+    padding:0 0;
+} */
+
+body {
+    margin:10px;
+    width:auto; 
+    text-align:center; 
+    font-weight:bold;
 }
