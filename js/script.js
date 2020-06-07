@@ -1,268 +1,270 @@
-// let d = new Date();
-// document.body.innerHTML = "<h1>Today's date is " + d + "</h1>"
+var db = new SQL.Database();
+var container = document.getElementById("container");
+var popup = document.getElementById("popup");
 
-var db = openDatabase('userDataBase', '1.0', 'This is a user database', 2 * 1024 * 1024);
-var columnsTotal;
-var str;
-var editstr;
-var joinTableValDummy;
-if (!db) {
-  alert("DataBase not created");
+var I_ADD_FORM = {
+  id: '',
+  f_name: '',
+  l_name: '',
+  address: '',
+};
+
+const FORM_NAMES = {
+  F_NAME: 'f_name',
+  L_NAME: 'l_name',
+  ADDRESS: 'address'
 }
-else {
-  var version = db.version;
-  console.log("database created", db.version);
+
+const QUERY = {
+  DROP_TABLE: 'DROP TABLE user;',
+  DROP_TABLE_IF_EXIST: 'DROP TABLE IF EXISTS user;',
+  CREATE_TABLE: `
+  CREATE TABLE user (
+                      id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                      f_name text, 
+                      l_name text, 
+                      address text
+                    );
+  `,
+  ALL_RECORD: "SELECT * FROM user;"
 }
-
-// db.transaction(function (tran) {
-//   tran.executeSql('CREATE TABLE IF NOT EXISTS Users (id INTEGER PRIMARY KEY,Name, MailID, Gender, Dob)');
-  // tran.executeSql('insert into Users (id, Name, MailID, Gender, Dob) values (1, "Siddharth","siddharthsalve@gmail.com","Male","19/06/1997")');
-// });
-// db.transaction(function (tx) {
-//     tx.executeSql('DROP TABLE Users');
-//   });
-// output();
-// function displayTable(transaction, results) {
-
-//   document.getElementById("result").innerHTML = "";
-
-//   var listholder = `<table border=1>
-//                                 <tr>
-//                                     <th>Name</th>
-//                                     <th>Email</th>
-//                                     <th>Gender</th>
-//                                     <th>Dob</th>
-//                                     <th>Edit</th>
-//                                 </tr>`;
-
-//   var i;
-//   for (i = 0; i < results.rows.length; i++) {
-//     var row = results.rows.item(i);
-//     listholder += "<tr><td>" + row.Name + "</td><td>" + row.MailID + "</td><td>" + row.Gender + "</td><td>" + row.Dob + "</td><td>" + "(<a href='javascript:void(0);' onclick='deleterow(" + row.id + ");'>Delete row</a>)" + "</td></tr>";
-//   }
-//   listholder += "</table>";
-//   document.getElementById("result").innerHTML = listholder;
-// }
-
-// function output() {
-//   if (db) {
-//     db.transaction(function (tran) {
-//       tran.executeSql("SELECT * FROM Users", [], displayTable);
-//     });
-//   } else {
-//     alert("db not found, your browser does not support web sql!");
-//   }
-// }
-
-function deleterow(id) {
-  if (db) {
-    db.transaction(function (tran) {
-      tran.executeSql("DELETE FROM Users WHERE id=?", [id], output);
-    });
-  } else {
-    alert("db not found, your browser does not support web sql!");
+var ALL_RECORDS = [];
+function dataBaseConf() {
+  const result = runQuery(QUERY.DROP_TABLE_IF_EXIST);
+  if (result) {
+    console.log('table drop result', result);
   }
+
+  const result1 = runQuery(QUERY.CREATE_TABLE);
+  if (result1) {
+    console.log('table create', result);
+  }
+  return true;
 }
 
-function onSubmit() {
-  var gen = "";
-  var name = document.getElementById('name').value;
-  var email = document.getElementById('email').value;
-  var gender = document.getElementsByName("gender");
-  var dob = document.getElementById('dob').value;
-  for (i = 0; i < gender.length; i++) {
-    if (gender[i].checked) {
-      gen = gender[i]
-    }
-  }
-  if (name == "" || email == "" || gen.value == "" || dob == "") {
-    alert("please fill form");
-    return false;
-  } else {
-    db.transaction(function (tran) {
-      tran.executeSql('insert into Users (Name, MailID, Gender, Dob) values (?, ?, ?, ?)', [name, email, gen.value, dob]);
-      output();
-    });
-    document.getElementById("userform").reset();
-    document.getElementById("mylocation").innerHTML = "Data Submitted";
+function runQuery(query) {
+  const result = db.run(query);
+  if (result) {
+    console.log('query result', result);
     return true;
-  }
-}
-
-function deleteRow2(id) {
-  if (db) {
-    db.transaction(function (tran) {
-      tran.executeSql("DELETE FROM Temp WHERE id=?", [id], output2);
-    });
   } else {
-    alert("db not found, your browser does not support web sql!");
-  }
-}
-
-function editRow(id) {
-  if (db) {
-    db.transaction(function (tran) {
-      tran.executeSql("select * FROM Temp WHERE id=?", [id], updateForm);
-    });
-  } else {
-    alert("db not found, your browser does not support web sql!");
-  }
-}
-function update() {
-  var formElements = document.getElementById('edit').elements;
-  var postData = {};
-  for (var i = 0; i < formElements.length; i++)
-    if (formElements[i].type != "submit")
-      postData[formElements[i].name] = formElements[i].value;
-
-  var getcolval = Object.values(postData);
-  getcolval.push(+getcolval.shift());
-  // console.log(getcolval);
-  var tablecol = [];
-  for (let i = 0; i < columnsTotal; i++) {
-    tablecol.push("field" + i + "=?");
-  }
-  editstr = tablecol.join(',');
-  editstr += " WHERE id=?";
-  db.transaction(function (tran) {
-    tran.executeSql("UPDATE Temp SET " + editstr, getcolval);
-  });
-  output2();
-}
-function updateForm(transaction, results) {
-  document.getElementById("container").innerHTML = "";
-  var row = results.rows.item(0);
-  // console.log("row", row);
-
-  var editForm = `<form id="edit">`;
-
-  for (var key of Object.keys(row)) {
-    if (key == "id") {
-      editForm += `<input type="text" name="` + key + `" id="row` + key + `" value="` + row[key] + `" class="in-text" readonly><br><br>`;
-    } else {
-      editForm += `<input type="text" name="` + key + `" id="row` + key + `" value="` + row[key] + `" class="in-text"required><br><br>`;
-    }
-  }
-  editForm += `<input type="submit" value="Submit" class="btn" onclick="update();return false;">&nbsp;<input type="submit" value="Cancel" class="btn" onclick="output2();return false;"></form>`;
-
-  document.getElementById("container").innerHTML = editForm;
-}
-
-function displayTable2(transaction, results) {
-
-  document.getElementById("container").innerHTML = "";
-
-  var tHeader = "<table border=1><tr><th>Id</th>";
-
-  for (let i = 0; i < columnsTotal; i++) {
-    tHeader += "<th>Column" + i + "</th>";
-  }
-  tHeader += "<th>edit</th><th>delete</th></tr>";
-  var i;
-  for (i = 0; i < results.rows.length; i++) {
-    var row = results.rows.item(i);
-
-    tHeader += "<tr>";
-    for (var key of Object.keys(row)) {
-      tHeader += "<td>" + row[key] + "</td>";
-    }
-    tHeader += "<td>" + "(<a href='javascript:void(0);' onclick='editRow(" + row.id + ");'>edit</a>)" + "</td><td>" + "(<a href='javascript:void(0);' onclick='deleteRow2(" + row.id + ");'>delete</a>)" + "</td></tr>";
-  }
-  tHeader += "</table><a href='javascript:void(0);' onclick='addNew();'>+Add New</a>";
-  document.getElementById("container").innerHTML = tHeader;
-}
-
-function output2() {
-  if (db) {
-    db.transaction(function (tran) {
-      tran.executeSql("SELECT * FROM Temp", [], displayTable2);
-    });
-  } else {
-    alert("db not found, your browser does not support web sql!");
-  }
-}
-
-function createTable() {
-  var row = document.getElementById('row').value;
-  var col = document.getElementById('col').value;
-  if (row == "" || col == "") {
-    alert("please fill form");
+    console.error('Error', result);
     return false;
   }
+}
 
-  if (row < 1 || col < 1) {
-    alert("negative or 0 value not allowed..!!");
-    return;
+function prepareQuery(query) {
+  let resultArry = []
+  const result = db.prepare(query);
+  while (result.step()) {
+    resultArry.push(result.getAsObject());
   }
-  columnsTotal = col;
-  var tablecol = [];
-  var tablevaldummy = []
-  for (let i = 0; i < col; i++) {
-    tablecol.push("field" + i);
-    tablevaldummy.push("?");
+  return resultArry;
+}
+
+function loading() {
+  var spinner = `
+  <div class="text-center">
+              <div class="spinner-border text-primary" style="width: 6rem; height: 6rem;" role="status">
+                  <span class="sr-only">Loading...</span>
+              </div>
+          </div>
+  `;
+  container.innerHTML = spinner;
+}
+
+function addFormTitle(id) {
+  if (id) {
+    return 'Edit User Detail';
   }
-  str = tablecol.join(',');
-  joinTableValDummy = tablevaldummy.join(",");
-  let str1 = 'CREATE TABLE IF NOT EXISTS Temp (id INTEGER PRIMARY KEY,' + str + ')';
-  db.transaction(function (tran) {
-    tran.executeSql('DROP TABLE Temp');
-  });
-  db.transaction(function (tran) {
-    tran.executeSql(str1);
-  });
+  return 'Add New User Detail';
+}
 
-  document.getElementById("container").innerHTML = "";
+function sucessPopUp(msg) {
+  var popupHtml = `
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <strong>Success</strong> ${msg}
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  `;
+  popup.innerHTML = popupHtml;
+  setTimeout(() => {
+    popup.innerHTML = null;
+  }, 3000);
+}
+function onChange(event) {
+  // console.log('onchange', event.target.value);
+  if (event.target.id == FORM_NAMES.F_NAME) {
+    I_ADD_FORM.f_name = event.target.value;
+  } else if (event.target.id == FORM_NAMES.L_NAME) {
+    I_ADD_FORM.l_name = event.target.value;
+  } else if (event.target.id == FORM_NAMES.ADDRESS) {
+    I_ADD_FORM.address = event.target.value;
+  }
+}
+function clearForm() {
+  for (let key in I_ADD_FORM) {
+    I_ADD_FORM[key] = '';
+  }
+  return I_ADD_FORM;
+}
 
-  var htmlstr = `<h1>Enter ` + row + ` Record<h1><br><br><form id="dataform">`;
-  for (let i = 0; i < row; i++) {
-    htmlstr += `<h3>Enter record ` + i + `<br>`;
-    for (let j = 0; j < col; j++) {
-
-      htmlstr += `<input type="text" name="` + i + `row` + j + `" id="` + i + `row` + j + `" class="in-text" placeholder="data` + j + `" required><br><br>`;
-
+function addUser() {
+  console.log('form', I_ADD_FORM);
+  if (I_ADD_FORM.f_name && I_ADD_FORM.l_name && I_ADD_FORM.address) {
+    if (I_ADD_FORM.id) {
+      const result = runQuery(`UPDATE user
+      SET f_name = '${I_ADD_FORM.f_name}',
+          l_name = '${I_ADD_FORM.l_name}',
+          address = '${I_ADD_FORM.address}'
+      WHERE id = ${I_ADD_FORM.id};`);
+      if (result) {
+        sucessPopUp('User Updated Successfuly..!');
+        loading()
+        displayTable();
+      }
+    } else {
+      const result = runQuery(`INSERT INTO user VALUES (NULL, '${I_ADD_FORM.f_name}', '${I_ADD_FORM.l_name}', '${I_ADD_FORM.address}');`);
+      if (result) {
+        sucessPopUp('User Added Successfuly..!');
+        loading()
+        displayTable();
+      }
     }
-    htmlstr += "<hr>";
+  } else {
+    alert("Fill all fields");
   }
-  htmlstr += `<input type="submit" value="Submit" class="btn" onclick="submitData();return false;"></form>`;
-  document.getElementById("container").innerHTML = htmlstr;
 }
 
-function submitData() {
-  var formElements = document.getElementById('dataform').elements;
-  var postData = {};
-  for (var i = 0; i < formElements.length; i++)
-    if (formElements[i].type != "submit")
-      postData[formElements[i].name] = formElements[i].value;
-
-  var getcolval = Object.values(postData);
-  // console.log(getcolval);
-  var chunk;
-  while (getcolval.length > 0) {
-
-    chunk = getcolval.splice(0, columnsTotal)
-    insertValue(chunk);
-  }
-
-  output2();
+function addForm(value) {
+  var form = `
+        <div class="row p-3 bg-light text-center">
+            <h1 class="text-right">
+            ${value.id ? '<img src="assets/back.svg" alt="Back" width="35" height="35" title="Back User" onclick="displayTable();return false;">' : ''}
+            ${addFormTitle(value.id)}</h1>
+        </div>
+        <div class="row">
+            <div class="col-lg-8 mt-20">
+                <div class="form-group">
+                    <label for="f_name">First Name</label>
+                    <input class="form-control" type=text name="f_name" id="f_name" value="${value.f_name}" onkeyup="onChange(event)"/>
+                </div>
+                <div class="form-group">
+                    <label for="l_name">Last Name</label>
+                    <input class="form-control" type=text name="l_name" id="l_name" value="${value.l_name}" onkeyup="onChange(event)"/>
+                </div>
+                <div class="form-group">
+                  <label for="address">Address</label>
+                  <textarea class="form-control" id="address" rows="3" onkeyup="onChange(event)">${value.address}</textarea>
+                </div>
+                <div class="form-group">
+                  <input class="btn btn-primary" type="submit" value="Submit" onclick="addUser();return false;">
+                </div>
+            </div>
+        </div>`;
+  return form;
 }
 
-function insertValue(data) {
-  db.transaction(function (tran) {
-    tran.executeSql('insert into Temp (' + str + ') values (' + joinTableValDummy + ')', data);
+function displayTable() {
+  loading();
+  ALL_RECORDS = prepareQuery(QUERY.ALL_RECORD);
+  var tableHtml = `
+        <div class="row p-3 bg-light text-center">
+            <h1 class="text-right">All User Records</h1>
+        </div>
+        <div class="row">
+        <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">First Name</th>
+            <th scope="col">Last Name</th>
+            <th scope="col">Address</th>
+            <th scope="col">Actions
+            ${ALL_RECORDS.length > 0 ? '<img src="assets/download.svg" alt="Download" width="22" height="22" title="Download All" onclick="download(\'multi\');return false;">' : ''}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+        `;
+  ALL_RECORDS.map(value => {
+    tableHtml += `
+      <tr>
+      <th scope="row">${value.id}</th>
+      <td>${value.f_name}</td>
+      <td>${value.l_name}</td>
+      <td>${value.address}</td>
+      <td>
+        <img src="assets/edit.svg" alt="Edit" width="25" height="25" title="Edit User" onclick="editUser(${value.id});return false;">
+        <img src="assets/trash.svg" alt="Delete" width="25" height="25" title="Delete User" onclick="deleteUser(${value.id});return false;">
+        <img src="assets/download.svg" alt="Download" width="25" height="25" title="Download" onclick="download(\'single\', ${value.id});return false;">
+      </td>
+    </tr>
+      `;
   });
+  tableHtml += ALL_RECORDS.length < 1 ? '<tr><td colspan="5" class="text-center">No Rocord Found..!</td></tr>' : '';
+  tableHtml += `
+        </tbody>
+      </table>
+      </div>
+      <div class="row">
+        <div class="text-right">
+          <button type="button" class="btn btn-info">
+          <img src="assets/addUser.svg" alt="Add" width="25" height="25" title="Add User" onclick="addNewUser();return false;">
+          </button>
+        </div>
+      </div>
+      `;
+  container.innerHTML = tableHtml;
+
 }
 
-function addNew() {
-  document.getElementById("container").innerHTML = "";
-
-  var htmlstr = `<h1><form id="dataform">`;
-    htmlstr += `<h3>Enter new record<br>`;
-    var i=0;
-    for (let j = 0; j < columnsTotal; j++) {
-
-      htmlstr += `<input type="text" name="` + i + `row` + j + `" id="` + i + `row` + j + `" class="in-text" placeholder="data` + j + `" required><br><br>`;
-
-    }
-  htmlstr += `<input type="submit" value="Add" class="btn" onclick="submitData();return false;">&nbsp;<input type="submit" value="Cancel" class="btn" onclick="output2();return false;"></form>`;
-  document.getElementById("container").innerHTML = htmlstr;
+function addNewUser() {
+  const value = clearForm();
+  container.innerHTML = addForm(value);
 }
+
+function editUser(id) {
+  var result = ALL_RECORDS.filter(x => x.id === id);
+  console.log('user to edit', result);
+  const value = clearForm();
+  I_ADD_FORM = result[0];
+  container.innerHTML = addForm(result[0]);
+}
+
+function deleteUser(id) {
+  console.log('user to delete', id);
+  const result = runQuery(`DELETE FROM user WHERE id = ${id};`);
+  if (result) {
+    sucessPopUp("Record Deleted Successfuly..!");
+    displayTable();
+  }
+
+}
+function download(type, id = null) {
+  if (type == 'single') {
+    var result = ALL_RECORDS.filter(x => x.id === id);
+    PrepareToDownload(result[0].f_name + "_" + result[0].l_name + ".json", result[0]);
+  } else {
+    PrepareToDownload("All_user.json", ALL_RECORDS);
+  }
+}
+
+function PrepareToDownload(filename, text) {
+  var element = document.createElement('a');
+  element.setAttribute('href', 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(text)));
+  element.setAttribute('download', filename);
+
+  element.style.display = 'none';
+  document.body.appendChild(element);
+
+  element.click();
+
+  document.body.removeChild(element);
+  sucessPopUp("Json File Downloaded Successfuly..!");
+}
+
+dataBaseConf();
+container.innerHTML = addForm(I_ADD_FORM);

@@ -1,12 +1,13 @@
-.btn{
+/* .btn{
     width: 100px;
     padding: 5px;
     font-size: 15px;
     background-color: cyan;
 }
+
 .btn:hover {
     background-color: blue;
-}
+} */
 .in-text{
     width: 20%;
     padding: 5px;
@@ -19,4 +20,13 @@
     font-family: 'Times New Roman', Times, serif;
     display: inline;
 }
+.spinner-border {
+    display: block;
+    position: fixed;
+    z-index: 1031; /* High z-index so it is on top of the page */
+    top: 50%;
+    right: 46%; /* or: left: 50%; */
+    margin-top: 0px; /* half of the elements height */
+    margin-right: 0px; /* half of the elements widht */
+  }
 
